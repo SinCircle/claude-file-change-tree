@@ -1,0 +1,28 @@
+{
+  "name": "claude-file-change-tree",
+  "version": "0.1.0",
+  "description": "File-modification-tree status-bar component, extracted from the claude-hud plugin for Claude Code",
+  "type": "module",
+  "main": "src/file-changes.js",
+  "exports": {
+    "./file-changes": "./src/file-changes.js",
+    "./render": "./src/render/lines/new-files.js",
+    "./colors": "./src/render/colors.js"
+  },
+  "scripts": {
+    "demo": "node example/demo.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "claude-code",
+    "statusline",
+    "hud",
+    "file-tree",
+    "diff"
+  ],
+  "license": "MIT",
+  "author": "Jarrod Watts (original claude-hud plugin)",
+  "homepage": "https://github.com/jarrodwatts/claude-hud"
+}
