@@ -365,18 +365,25 @@ function renderChildrenShown(parent, prefix, shownFiles) {
         return tb - ta;
     });
     const shownLeaves = fileLeaves.filter((c) => shownFiles.has(c.file));
+    const hiddenLeaves = fileLeaves.filter((c) => !shownFiles.has(c.file));
     const hiddenBuckets = { added: 0, modified: 0, deleted: 0 };
-    for (const c of fileLeaves)
-        if (!shownFiles.has(c.file))
-            hiddenBuckets[fileChangeBucket(c.file)] += 1;
-    const hasSummary = hiddenBuckets.added + hiddenBuckets.modified + hiddenBuckets.deleted > 0;
+    for (const c of hiddenLeaves)
+        hiddenBuckets[fileChangeBucket(c.file)] += 1;
+    const hiddenCount = hiddenLeaves.length;
+    const hasSummary = hiddenCount > 0;
     const items = [];
     for (const f of folders)
         items.push({ kind: 'node', node: f });
     for (const f of shownLeaves)
         items.push({ kind: 'leaf', node: f });
-    if (hasSummary)
-        items.push({ kind: 'summary', buckets: hiddenBuckets });
+    if (hasSummary) {
+        // A single hidden direct file costs the same 1 line as a count summary,
+        // so show its name instead of a useless "+1/~1/-1" count.
+        if (hiddenCount === 1)
+            items.push({ kind: 'leaf', node: hiddenLeaves[0] });
+        else
+            items.push({ kind: 'summary', buckets: hiddenBuckets });
+    }
     items.forEach((item, i) => {
         const last = i === items.length - 1;
         const conn = last ? '└── ' : '├── ';
@@ -413,11 +420,14 @@ function renderTreeShown(tree, ctx, shownFiles) {
         const tb = b.file?.lastTime?.getTime?.() || 0;
         return tb - ta;
     });
+    const hiddenTopLeaves = fileLeaves.filter((n) => !shownFiles.has(n.file));
     const hiddenTop = { added: 0, modified: 0, deleted: 0 };
-    for (const n of fileLeaves)
-        if (!shownFiles.has(n.file))
-            hiddenTop[fileChangeBucket(n.file)] += 1;
-    const hasTopSummary = hiddenTop.added + hiddenTop.modified + hiddenTop.deleted > 0;
+    for (const n of hiddenTopLeaves)
+        hiddenTop[fileChangeBucket(n.file)] += 1;
+    const hasTopSummary = hiddenTopLeaves.length > 0;
+    // A single hidden top-level file costs the same 1 line as a count summary,
+    // so show its name inline instead of a useless "+1/~1/-1" count.
+    const inlineTopHidden = hiddenTopLeaves.length === 1 ? hiddenTopLeaves[0] : null;
     for (const [, node] of entries) {
         if (node.children.size > 0) {
             if (isCollapsedNode(node)) {
@@ -447,11 +457,11 @@ function renderTreeShown(tree, ctx, shownFiles) {
                 lines.push(...renderChildrenShown(node, '', shownFiles));
             }
         }
-        else if (node.file && shownFiles.has(node.file)) {
+        else if (node.file && (shownFiles.has(node.file) || node === inlineTopHidden)) {
             lines.push(formatNode(node));
         }
     }
-    if (hasTopSummary)
+    if (hasTopSummary && !inlineTopHidden)
         lines.push('└' + formatBucketSummary(hiddenTop));
     return lines;
 }

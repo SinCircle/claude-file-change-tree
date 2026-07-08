@@ -514,7 +514,7 @@ export function getFileChanges(tools, cwd) {
     // always rooted relative to cwd (cwd IS the project) - never merged under an external LCA,
     // even when externals sit above cwd: externals are often unrelated to the cwd project (e.g.
     // ~/.claude plugin/memory edits while cwd is a project subfolder), and merging would nest
-    // cwd files under the wrong root (e.g. "qyf06/Desktop/test/..." instead of "test/...").
+    // cwd files under the wrong root (e.g. "user/Desktop/test/..." instead of "test/...").
     // process.cwd() is added when it is cwd's parent (cwd a subfolder, procCwd the project root).
     const inputs = [];
     if (nCwd)

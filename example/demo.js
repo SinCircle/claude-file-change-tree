@@ -10,7 +10,7 @@
 import { getFileChanges } from '../src/file-changes.js';
 import { renderNewFilesLine } from '../src/render/lines/new-files.js';
 
-const cwd = 'C:/Users/qyf06/Desktop/myproject';
+const cwd = '/home/user/projects/myproject';
 
 /** @type {import('../src/types.d.ts').ToolEntry[]} */
 const tools = [
