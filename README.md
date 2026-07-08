@@ -23,22 +23,11 @@ myproject/
 
 ---
 
-## 归属与来源
+## 归属与许可
 
-- **原始作者：** © 2026 [Jarrod Watts](https://github.com/jarrodwatts)，
-  基于 **MIT 许可证** 发布（详见 [`LICENSE`](./LICENSE)）。
-- **来源：** `claude-hud` Claude Code 插件，版本 `0.1.0`。
-- **复制内容：** 文件树渲染器（`render/lines/new-files.js`）、
-  颜色辅助函数（`render/colors.js`）以及文件变更提取器
-  （`getFileChanges` + 辅助函数，原始内联于 `index.js`）。这些都是
-  插件发布版 `dist/` 输出的**逐字节复制**。
-- **为什么是编译后的 JS 而非 TypeScript：** 插件仅发布编译后的
-  `dist/*.js`（外加 `.d.ts`）；原始 `src/*.ts` 并未公开，且
-  source map 中不包含 `sourcesContent`。因此最忠实、可读的产物
-  就是编译后的 JS —— 它未经压缩并保留了所有原始注释。
-- **唯一所做的修改：** 为 `getFileChanges` 添加了 `export`，使其可以作为模块导入。
-  除此之外未更改任何逻辑。详见 [`src/file-changes.js`](./src/file-changes.js)
-  中的确切来源说明。
+本项目源自 [Jarrod Watts](https://github.com/jarrodwatts) 的开源插件
+[`claude-hud`](https://github.com/jarrodwatts/claude-hud)（v0.1.0），
+版权 © 2026 Jarrod Watts，基于 **MIT 许可证** 发布（详见 [`LICENSE`](./LICENSE)）。
 
 ---
 
@@ -62,43 +51,15 @@ myproject/
             └── new-files.d.ts
 ```
 
-`src/render/...` 的子目录结构被有意保留，以便原始相对导入
-（`new-files.js` 中的 `../colors.js`）能够原封不动地正常工作。
 
 ---
 
 ## 工作原理
 
-分为两层：数据层（data）和渲染层（render）：
+分为**数据层**和**渲染层**：
 
-### 1. 数据层 — `getFileChanges(tools, cwd)` → `ModifiedFileSummary[]`
-
-将一系列工具调用记录转换为每个文件的聚合记录。它能识别：
-
-| 工具 | 可识别的操作 |
-|------|------------|
-| `Write` | 新建文件（或删除行时视为修改） |
-| `Edit` | 修改，根据 `resultText` 或 `oldString`/`newString` 的 LCS 差异计算 `+N/-M` |
-| `Bash` | `rm`/`del`（删除）、`mv`（移动 → 带来源的 `mv_added`）、`cp`（复制 → 带来源的新增）、`mkdir`/`touch`（创建）、`unzip`/`tar`/`7z`（解压 → 创建目录） |
-
-此外它还会：
-- 规范化 Windows/Unix 路径，并将相对路径基于 `cwd` 进行解析。
-- 将所有内容重新根植于项目的 LCA（最低公共祖先）之下（这样深层嵌套的绝对路径
-  会折叠成一棵以项目名称为根的整洁树形结构）。
-- 区分内部文件（位于 `cwd` 之下）和外部文件，并合并跨扩展名共享基础名称的
-  批量条目（例如 `foo.js`、`foo.ts` → `foo(.ts)`）。
-
-### 2. 渲染层 — `renderNewFilesLine(ctx)` → 树形字符串
-
-根据 `ctx.modifiedFiles` 构建树并渲染。为了始终控制在
-**6 行预算**（`MAX_TREE_LINES`）之内，它会按以下三级策略逐级回退：
-
-1. **完整树** — 每个文件独占一行。在本身就符合预算时使用。
-2. **混合内联** — 仅将*最短*的单文件目录链（`路径/文件`）内联到一行，
-   以便在填满预算的同时不截断长路径。
-3. **预算模式** — 保持树形结构，但每个文件夹只显示最近被修改过的文件；
-   每个文件夹中较旧的直接文件会折叠成一条
-   `├── +a added, ~m modified, -d deleted` 摘要行，放在该文件夹下。
+- **`getFileChanges(tools, cwd)`** — 将工具调用记录（Write、Edit、Bash 等）转换为每个文件的聚合变更摘要，自动处理路径规范化和目录树重根。
+- **`renderNewFilesLine(ctx)`** — 根据变更列表构建并渲染彩色树形输出，内置行数预算控制，在变更较多时自动折叠以保持简洁。
 
 ---
 
