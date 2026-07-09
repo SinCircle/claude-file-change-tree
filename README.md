@@ -1,13 +1,13 @@
 # claude-file-change-tree
 
-从 Claude Code 状态栏中提取的**文件修改树**（file-modification-tree）代码——
-源自 [`claude-hud`](https://github.com/jarrodwatts/claude-hud) 插件（v0.1.0），
-整理成一个精简、自包含、可直接运行的仓库。
+从修改过的 [`claude-hud`](https://github.com/jarrodwatts/claude-hud) 插件中
+提取出来的**文件修改树**（file-modification-tree）功能——
+这是一个 claude-hud 原本**不具备**的特性，在 claude-hud 分支中
+从零设计实现并集成，现整理成独立、可直接运行的仓库。
 
 当 Claude Code 在会话期间编辑文件时，底部状态栏会渲染一棵树，列出所有被添加 /
 修改 / 删除 / 移动的文件，带有 `├── │ └──` 连接线、彩色符号、每个文件的
 `(+N/-M)` 行数差异，以及自动折叠机制，使其始终控制在 ~6 行的预算内。
-**本仓库就是该功能的独立提取版，并附有完整文档。**
 
 ```
 myproject/
@@ -23,11 +23,27 @@ myproject/
 
 ---
 
+## 背景
+
+[`claude-hud`](https://github.com/jarrodwatts/claude-hud) 是
+[Jarrod Watts](https://github.com/jarrodwatts) 开发的一个优秀的 Claude Code
+状态栏插件（MIT 协议），它本身提供了项目路径、上下文窗口用量、工具活动、
+Git 状态、Token 配额等功能，但**不包含文件修改树**。
+
+由于原版 claude-hud 缺少直观的文件变更概览，该文件修改树模块
+在 claude-hud 分支中从零实现，随后作为独立功能提取到此仓库，
+方便单独使用或集成。
+
+---
+
 ## 归属与许可
 
-本项目源自 [Jarrod Watts](https://github.com/jarrodwatts) 的开源插件
-[`claude-hud`](https://github.com/jarrodwatts/claude-hud)（v0.1.0），
-版权 © 2026 Jarrod Watts，基于 **MIT 许可证** 发布（详见 [`LICENSE`](./LICENSE)）。
+- **文件修改树实现**（`src/file-changes.js`、`src/render/lines/new-files.js`、
+  `example/demo.js`、`src/types.d.ts`）——由 SinCircle 原创编写。
+- **颜色辅助模块**（`src/render/colors.js`）——逐字节复制自 claude-hud，
+  版权 © 2026 Jarrod Watts。
+
+本项目整体基于 **MIT 许可证** 发布，详见 [`LICENSE`](./LICENSE)。
 
 ---
 
@@ -35,7 +51,7 @@ myproject/
 
 ```
 .
-├── LICENSE                 # MIT — 来自 claude-hud 的原样许可（© Jarrod Watts）
+├── LICENSE                 # MIT — 双重版权（SinCircle + © Jarrod Watts）
 ├── package.json
 ├── README.md               # 本文件
 ├── example/
@@ -44,10 +60,10 @@ myproject/
     ├── file-changes.js     # getFileChanges(tools, cwd) + 所有辅助函数（数据层）
     ├── types.d.ts          # ModifiedFileSummary、ToolEntry、精简的 RenderContext
     └── render/
-        ├── colors.js       # ANSI 颜色辅助函数（逐字节复制）
+        ├── colors.js       # ANSI 颜色辅助函数（源自 claude-hud，© Jarrod Watts）
         ├── colors.d.ts
         └── lines/
-            ├── new-files.js   # renderNewFilesLine(ctx) — 树形渲染器（逐字节复制）
+            ├── new-files.js   # renderNewFilesLine(ctx) — 树形渲染器
             └── new-files.d.ts
 ```
 
@@ -112,6 +128,16 @@ if (tree) console.log(tree);               // 没有任何变更时返回 null
 
 ---
 
+## 致谢
+
+- [Jarrod Watts](https://github.com/jarrodwatts) 的
+  [`claude-hud`](https://github.com/jarrodwatts/claude-hud) 插件为本项目提供了
+  ANSI 颜色基础设施（`colors.js`），以及一个优秀的扩展平台。
+
+---
+
 ## 许可证
 
-MIT — © 2026 Jarrod Watts。详见 [`LICENSE`](./LICENSE)。
+MIT — 详见 [`LICENSE`](./LICENSE)。其中：
+- `src/render/colors.js` 版权 © 2026 Jarrod Watts
+- 其余代码版权 © 2026 SinCircle

@@ -1,17 +1,15 @@
 /**
  * file-changes.js
  *
- * Extracted VERBATIM from claude-hud v0.1.0 dist/index.js (original lines
- * 124-690): the getFileChanges(tools, cwd) function plus every helper it
- * depends on. This is the data layer of the file-modification-tree feature -
- * it turns a list of tool invocations (Write / Edit / Bash rm|mv|cp|mkdir|
- * touch|unzip) into a ModifiedFileSummary[] that the tree renderer consumes.
+ * 数据层：文件修改树功能的核心模块。
+ * 将工具调用记录（Write / Edit / Bash rm|mv|cp|mkdir|touch|unzip）转换为
+ * ModifiedFileSummary[] 供树形渲染器使用。
  *
- * The ONLY change from the original: export was added to getFileChanges so it
- * can be imported as a module. No other logic was modified.
+ * 本文件是作者在 claude-hud 分支中从零实现的原创代码，并非 claude-hud 原有功能。
+ * claude-hud 本身不包含文件修改树特性。
  *
- * Source: claude-hud by Jarrod Watts (MIT, (c) 2026 Jarrod Watts)
- * Runtime: Node.js >= 18. Uses only the process.cwd() global - no imports.
+ * 作者：SinCircle（MIT）
+ * 运行环境：Node.js >= 18。仅使用 process.cwd() 全局变量，无外部依赖。
  */
 
 // ---- helpers ----------------------------------------------------------------

@@ -1,3 +1,16 @@
+/**
+ * new-files.js
+ *
+ * 渲染层：将 ModifiedFileSummary[] 渲染为带 ANSI 颜色的树形文本输出。
+ * 支持自动折叠、行数预算控制（~6 行）、目录链压缩等特性。
+ *
+ * 本文件是作者在 claude-hud 分支中从零实现的原创代码，并非 claude-hud 原有功能。
+ * claude-hud 本身不包含文件修改树特性。
+ *
+ * 作者：SinCircle（MIT）
+ * 依赖：colors.js（源自 claude-hud，© 2026 Jarrod Watts，MIT）
+ */
+
 import { green, yellow, red, magenta } from "../colors.js";
 const TYPE_SYMBOL_MAP = {
     added: [green, '+'], modified: [yellow, '~'], deleted: [red, '-'],

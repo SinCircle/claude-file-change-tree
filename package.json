@@ -23,6 +23,8 @@
     "diff"
   ],
   "license": "MIT",
-  "author": "Jarrod Watts (original claude-hud plugin)",
-  "homepage": "https://github.com/jarrodwatts/claude-hud"
+  "author": "SinCircle",
+  "contributors": ["Jarrod Watts (claude-hud plugin — src/render/colors.js)"],
+  "homepage": "https://github.com/jarrodwatts/claude-hud",
+  "description": "File-modification-tree status-bar component — an original feature implemented in a modified claude-hud fork, extracted as a standalone module"
 }
